@@ -7,6 +7,7 @@ import liquibase.exception.DatabaseException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -29,10 +30,21 @@ public class NuoDBDatabase extends AbstractDatabase {
     }
 
     @Override
+    public String getLiquibaseSchemaName() {
+        final String schemaName = getSchemaName(getConnection().getURL());
+        return schemaName == null ? getDefaultSchemaName() : schemaName;
+    }
+
+    @Override
+    public String getDefaultSchemaName() {
+        final String defaultSchemaName = super.getDefaultSchemaName();
+        return defaultSchemaName == null ? "USER" : defaultSchemaName;
+    }
+
+    @Override
     public boolean isReservedWord(String word) {
         return RESERVED_WORDS.contains(word.toUpperCase());
     }
-
 
     @Override
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
@@ -45,6 +57,31 @@ public class NuoDBDatabase extends AbstractDatabase {
             return "com.nuodb.jdbc.Driver";
         }
         return null;
+    }
+
+    @Override
+    protected String getDefaultDatabaseSchemaName() throws DatabaseException {
+//        System.err.println("***** CATALOG: " + getConnection().getCatalog());
+//        System.err.println("***** URL:     " + getConnection().getURL());
+        return super.getDefaultDatabaseSchemaName();
+    }
+
+    @Override
+    public String escapeTableName(String schemaName, String tableName) {
+//        System.out.println("SELF: " + this);
+//        System.out.println(">>>>>>>>>>> ESCAPE TABLE NAME: " + schemaName + "@" + tableName);
+        return super.escapeTableName(schemaName, tableName);
+    }
+
+    @Override
+    public String escapeViewName(String schemaName, String viewName) {
+        return escapeDatabaseObject(viewName);
+    }
+
+    @Override
+    public boolean isSystemTable(String catalogName, String schemaName, String tableName) {
+//        System.out.println("** IS SYSTEM TABLE: " + schemaName + "@" + tableName);
+        return super.isSystemTable(catalogName, schemaName, tableName) || schemaName.equals("SYSTEM");
     }
 
     @Override
@@ -79,10 +116,36 @@ public class NuoDBDatabase extends AbstractDatabase {
 
     @Override
     public boolean supportsSchemas() {
-        return false;
+        return true;
     }
 
     // IMPLEMENTATION DETAILS
+
+    private static String getSchemaName(String url) {
+        return extractProperties(url).getProperty("schema");
+    }
+
+    private static Properties extractProperties(String url) {
+        Properties properties = new Properties();
+
+        int p1 = url.indexOf("://") + 3;
+
+        if (p1 > 0) {
+            int p3 = url.indexOf('?', p1);
+            if (p3 > 0) {
+                String nvString = url.substring(p3 + 1);
+                String[] nameValues = nvString.split("&");
+                for (String nameValue : nameValues) {
+                    String[] nv = nameValue.split("=");
+                    if (nv.length == 2)
+                        properties.put(nv[0], nv[1]);
+                }
+
+            }
+        }
+
+        return properties;
+    }
 
     private static String[] getReservedWords() {
         return new String[]
@@ -91,8 +154,10 @@ public class NuoDBDatabase extends AbstractDatabase {
                         "COLUMN", "CONSTRAINT", "DATABASE", "DOMAIN", "INDEX", "KEY", "ROLE",
                         "SCHEMA", "SEQUENCE", "TABLE", "TRIGGER", "USER", "VIEW",
                         // Types
-                        "BIGINT", "BOOLEAN", "DATE", "DECIMAL", "DOUBLE PRECISION", "INTEGER",
+                        "BIGINT", "BOOLEAN", "DATE", "DECIMAL", "DOUBLE", "FLOAT", "INTEGER",
                         "NUMERIC", "SMALLINT", "TIME", "TIMESTAMP", "VARCHAR",
+                        // Type Modifiers
+                        "PRECISION",
                         // Predicate Modifiers
                         "AND", "NOT",
                         // General Modifiers

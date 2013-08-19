@@ -35,7 +35,7 @@ public class NuoDBTypeConverter extends AbstractTypeConverter {
 
     @Override
     public DateTimeType getDateTimeType() {
-        return new DateTimeType("TIMESTAMPT");
+        return new DateTimeType("TIMESTAMP");
     }
 
     @Override
