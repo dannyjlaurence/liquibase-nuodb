@@ -61,15 +61,14 @@ public class NuoDBDatabase extends AbstractDatabase {
 
     @Override
     protected String getDefaultDatabaseSchemaName() throws DatabaseException {
-//        System.err.println("***** CATALOG: " + getConnection().getCatalog());
-//        System.err.println("***** URL:     " + getConnection().getURL());
+        trace("@getDefaultDatabaseSchemaName: catalog=" + getConnection().getCatalog());
+        trace("@getDefaultDatabaseSchemaName: url=" + getConnection().getURL());
         return super.getDefaultDatabaseSchemaName();
     }
 
     @Override
     public String escapeTableName(String schemaName, String tableName) {
-//        System.out.println("SELF: " + this);
-//        System.out.println(">>>>>>>>>>> ESCAPE TABLE NAME: " + schemaName + "@" + tableName);
+        trace("@escapeTableName: " + schemaName + "@" + tableName);
         return super.escapeTableName(schemaName, tableName);
     }
 
@@ -80,7 +79,7 @@ public class NuoDBDatabase extends AbstractDatabase {
 
     @Override
     public boolean isSystemTable(String catalogName, String schemaName, String tableName) {
-//        System.out.println("** IS SYSTEM TABLE: " + schemaName + "@" + tableName);
+        trace("@isSystemTable: " + schemaName + "@" + tableName);
         return super.isSystemTable(catalogName, schemaName, tableName) || schemaName.equals("SYSTEM");
     }
 
@@ -120,6 +119,14 @@ public class NuoDBDatabase extends AbstractDatabase {
     }
 
     // IMPLEMENTATION DETAILS
+
+    private static final boolean ENABLE_TRACE = Boolean.parseBoolean(System.getProperty("liquibase.nuodb.trace", "false"));
+
+    private static void trace(String message) {
+        if (ENABLE_TRACE) {
+            System.out.println(message);
+        }
+    }
 
     private static String getSchemaName(String url) {
         return extractProperties(url).getProperty("schema");
@@ -187,5 +194,4 @@ public class NuoDBDatabase extends AbstractDatabase {
                         "COMMITTED", "ISOLATION", "LEVEL", "READ", "SERIALIZABLE", "WRITE",
                 };
     }
-
 }
