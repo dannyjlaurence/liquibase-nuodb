@@ -68,13 +68,22 @@ public class NuoDBDatabase extends AbstractDatabase {
 
     @Override
     public String escapeTableName(String schemaName, String tableName) {
+        if (schemaName == null) {
+            schemaName = getLiquibaseSchemaName();
+        }
         trace("@escapeTableName: " + schemaName + "@" + tableName);
+        trace("@escapeTableName: defaultSchema=" + getDefaultSchemaName());
         return super.escapeTableName(schemaName, tableName);
     }
 
     @Override
     public String escapeViewName(String schemaName, String viewName) {
         return escapeDatabaseObject(viewName);
+    }
+
+    @Override
+    public String escapeIndexName(String schemaName, String indexName) {
+        return escapeDatabaseObject(indexName);
     }
 
     @Override
