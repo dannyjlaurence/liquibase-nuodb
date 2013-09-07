@@ -19,3 +19,8 @@ The current version of this extension has the following dependencies:
 
     mvn clean
     mvn install
+
+# Testing
+
+Run `mvn clean install` on the liquibase-nuodb-sample project after locally
+running the same targets on this project.
