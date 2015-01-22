@@ -20,12 +20,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <repositories>
-    <repository>
-      <id>github-releases</id>
-      <url>http://oss.sonatype.org/content/repositories/github-releases/</url>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
@@ -67,7 +61,7 @@
         </executions>
       </plugin>
       <plugin>
-        <version>3.0</version>
+        <version>3.2</version>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -78,7 +72,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.0</version>
+        <version>3.2</version>
         <configuration>
           <reportPlugins>
             <plugin>
@@ -110,5 +104,19 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+		<repository>
+			<id>repo1</id>
+			<name>Maven Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+	</repositories>
+  <pluginRepositories>
+		<pluginRepository>
+			<id>org.apache.maven.plugins</id>
+			<name>Maven plugin Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
 
