@@ -4,7 +4,7 @@
 
   <groupId>com.nuodb.liquibase</groupId>
   <artifactId>liquibase-nuodb</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>liquibase-nuodb</name>
