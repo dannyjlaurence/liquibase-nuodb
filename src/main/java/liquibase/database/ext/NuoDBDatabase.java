@@ -38,7 +38,9 @@ public class NuoDBDatabase extends AbstractDatabase {
     @Override
     public String getDefaultSchemaName() {
         final String defaultSchemaName = super.getDefaultSchemaName();
-        return defaultSchemaName == null ? "USER" : defaultSchemaName;
+        final String schemaName = getSchemaName(getConnection().getURL());
+
+        return defaultSchemaName == null ? schemaName : defaultSchemaName;
     }
 
     @Override
